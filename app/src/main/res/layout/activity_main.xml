@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.MainActivity">
+
+    <Button
+        android:layout_width="@dimen/btn_width"
+        android:layout_height="@dimen/btn_height"
+        android:text="@string/new_game"
+        android:id="@+id/new_game_btn"
+        android:layout_marginTop="@dimen/fab_margin_more"
+        android:layout_centerHorizontal="true" />
+    <Button
+        android:layout_width="@dimen/btn_width"
+        android:layout_height="@dimen/btn_height"
+        android:text="@string/high_scores"
+        android:id="@+id/high_score_btn"
+        android:layout_below="@+id/new_game_btn"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:layout_centerHorizontal="true" />
+    <Button
+        android:layout_width="@dimen/btn_width"
+        android:layout_height="@dimen/btn_height"
+        android:text="@string/game_settings"
+        android:id="@+id/game_settings_btn"
+        android:layout_below="@+id/high_score_btn"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:layout_centerHorizontal="true" />
+    <Button
+        android:layout_width="@dimen/btn_width"
+        android:layout_height="@dimen/btn_height"
+        android:text="@string/quit_game"
+        android:id="@+id/quit_game_btn"
+        android:layout_below="@+id/game_settings_btn"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

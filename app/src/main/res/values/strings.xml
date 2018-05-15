@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Tedroid</string>
+    <string name="btn_right">\u2192</string>
+    <string name="btn_left">\u2190</string>
+    <string name="btn_rotate">\u21BB</string>
+    <string name="btn_down">\u2193</string>
+    <string name="new_game">New Game</string>
+    <string name="quit_game">Quit the game</string>
+    <string name="high_scores">High Scores</string>
+    <string name="game_settings">Game Settings</string>
+    <string name="preference_file_key">TetrisSharedPreferences</string>
+    <string name="level">difficulty</string>
+</resources>

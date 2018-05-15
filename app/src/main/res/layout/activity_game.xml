@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_main_view_background"
+    android:orientation="vertical">
+
+
+    <!-- The main gaming area -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <!-- The MainView -->
+        <com.example.tomek.androidtetrisjava.GameLogic.GameView
+            android:id="@+id/game_view"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="8.0" />
+
+        <!-- The information area -->
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="7.0">
+            <!-- The label score -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:gravity="center"
+                android:id="@+id/score_label"
+                android:text="Score" />
+
+            <!-- The score -->
+            <TextView android:id="@+id/text_view_score_main_activity"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:layout_below="@+id/score_label"
+                android:text="0" />
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/grid_buttons_view"
+                android:layout_below="@+id/text_view_score_main_activity"
+                android:columnCount="2">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnSpan="1"
+                    android:layout_column="0"
+                    android:text="@string/btn_left"
+                    android:id="@+id/image_button_left_main_activity"
+                    android:layout_row="0" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnSpan="1"
+                    android:layout_column="1"
+                    android:id="@+id/image_button_right_main_activity"
+                    android:text="@string/btn_right"
+                    android:layout_row="0" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnSpan="1"
+                    android:layout_column="0"
+                    android:id="@+id/image_button_down_main_activity"
+                    android:text="@string/btn_down"
+                    android:layout_row="1" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_columnSpan="1"
+                    android:layout_column="1"
+                    android:text="@string/btn_rotate"
+                    android:id="@+id/image_button_rotate_main_activity"
+                    android:layout_row="1" />
+            </GridLayout>
+
+            <Button android:id="@+id/button_reset_main_activity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:background="@color/colorPrimaryDark"
+                android:textColor="#FFFFFF"
+                android:textAllCaps="false"
+                android:layout_below="@+id/grid_buttons_view"
+                android:text="Reset" />
+            <Button android:id="@+id/button_play_again"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:layout_margin="6dp"
+                android:layout_below="@+id/button_reset_main_activity"
+                android:textColor="#FFFFFF"
+                android:textAllCaps="false"
+                android:background="#D3D3D3"
+                android:text="Play again" />
+            <Button android:id="@+id/button_back_to_menu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:background="@color/colorPrimaryDark"
+                android:textColor="#FFFFFF"
+                android:textAllCaps="false"
+                android:layout_below="@+id/button_play_again"
+                android:text="Back to menu" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>
