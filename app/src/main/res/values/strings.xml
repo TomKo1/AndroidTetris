@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Tedroid</string>
+    <string name="app_name">Tetris</string>
     <string name="btn_right">\u2192</string>
     <string name="btn_left">\u2190</string>
     <string name="btn_rotate">\u21BB</string>
@@ -10,4 +10,7 @@
     <string name="game_settings">Game Settings</string>
     <string name="preference_file_key">TetrisSharedPreferences</string>
     <string name="level">difficulty</string>
+    <!-- for database management -->
+    <string name="unsupportedQuery">Unsupported Query</string>
+    <string name="insert_failure">Error while inserting to the database</string>
 </resources>
