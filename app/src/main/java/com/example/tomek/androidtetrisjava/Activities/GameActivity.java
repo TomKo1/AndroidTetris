@@ -1,20 +1,28 @@
 package com.example.tomek.androidtetrisjava.Activities;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tomek.androidtetrisjava.GameLogic.GameValues;
 import com.example.tomek.androidtetrisjava.GameLogic.GameView;
 import com.example.tomek.androidtetrisjava.R;
+import com.example.tomek.androidtetrisjava.database.TopScore;
+import com.example.tomek.androidtetrisjava.threads.ScoreSaveThread;
 
 import java.util.Random;
 import java.util.Timer;
@@ -31,7 +39,7 @@ public class GameActivity extends AppCompatActivity {
     private boolean isStarted = false;
     private boolean isGoing = false;
 
-
+    private String playerName = "Default Player";
 
     private int currentScore = 0;
 
@@ -46,7 +54,7 @@ public class GameActivity extends AppCompatActivity {
 
     /**
      * Handler interacts with UIThread (because it is created here -> in UIThread) when the message
-     *  is received he do some 'UIThread' work.
+     * is received he do some 'UIThread' work.
      */
     private Handler refreshHandler = new Handler() {
         @Override
@@ -63,7 +71,6 @@ public class GameActivity extends AppCompatActivity {
 
                         int count = GameActivity.this.gameView.checkForRowsElimination();
                         GameActivity.this.addPoints(count * 10);
-                        //Log.e("@!#@!@#!", "Ustawiam punkty! " + gameActivity.getCurrentScore() + " " + count);
 
                         GameActivity.this.textView_score
                                 .setText(Integer.toString(GameActivity.this.getCurrentScore()));
@@ -75,13 +82,19 @@ public class GameActivity extends AppCompatActivity {
                         // check if the game is over or if we can continue
                         if (GameActivity.this.gameView
                                 .isGameOver(GameActivity.this.nextBlockType)) {
+
+                            // run thread saving to Db
+                            String score = textView_score.getText().toString();
+                           // if (!score.equals("0")) {
+                                TopScore topScore = new TopScore(score, playerName);
+                                ScoreSaveThread asyncSaver = new ScoreSaveThread(GameActivity.this.getContentResolver());
+                                asyncSaver.execute(topScore);
+                            //}
                             GameActivity.this.reset();
                         } else {
                             // next block
                             GameActivity.this.pushNextBlock();
 
-                            // new Timer to be executed
-                            //todo: game difficulty!
                             GameActivity.this.setNewTimer(miliSecondsLevel);
 
                         }
@@ -155,7 +168,6 @@ public class GameActivity extends AppCompatActivity {
                     GameActivity.this.setNewTimer(miliSecondsLevel);
 
 
-
                     break;
 
                 case GameValues.RESET:
@@ -194,15 +206,15 @@ public class GameActivity extends AppCompatActivity {
         }
     };
 
-    private void makeAppropriateLevel(){
+    private void makeAppropriateLevel() {
         Context context = getApplicationContext();
 
         SharedPreferences
                 sharedPref = context.getSharedPreferences(
                 getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        int level = sharedPref.getInt(getString(R.string.level),1);
+        int level = sharedPref.getInt(getString(R.string.level), 1);
 
-        switch (level){
+        switch (level) {
             case 1:
                 miliSecondsLevel = 1000;
                 break;
@@ -219,13 +231,12 @@ public class GameActivity extends AppCompatActivity {
     }
 
 
-
-
     //todo: implement behaviour when the view is no longer visaible and so on..
 
 
     /**
      * Just overwritten onCreateMode - initializes views.
+     *
      * @param savedInstanceState
      */
     @Override
@@ -236,7 +247,7 @@ public class GameActivity extends AppCompatActivity {
         //get game view reference
         this.gameView = (GameView) findViewById(R.id.game_view);
 
-
+        this.playerName = getIntent().getStringExtra("PLAYER_NAME");
 
         configButtons();
 
@@ -262,14 +273,14 @@ public class GameActivity extends AppCompatActivity {
         //this.refreshHandler.sendEmptyMessage(GameValues.RE)
     }
 
-    private void configButtons(){
+    private void configButtons() {
 
         this.textView_score = (TextView) findViewById(R.id.text_view_score_main_activity);
 
-        this.playAgainBtn = (Button)findViewById(R.id.button_play_again);
+        this.playAgainBtn = (Button) findViewById(R.id.button_play_again);
 
         playAgainBtn.setOnClickListener(
-                (view)->{
+                (view) -> {
                     GameActivity.this.refreshHandler.sendEmptyMessage(GameValues.START);
                     GameActivity.this.playAgainBtn.setEnabled(false);
                     GameActivity.this.playAgainBtn.setClickable(false);
@@ -279,16 +290,16 @@ public class GameActivity extends AppCompatActivity {
 
         // Set the OnClickListeners
         this.findViewById(R.id.button_reset_main_activity).setOnClickListener(
-                (view) ->{
+                (view) -> {
                     if (isStarted) {
                         reset();
                     }
                 }
         );
         //todo: change this for different navigation
-        Button backToMenu = (Button)findViewById(R.id.button_back_to_menu);
+        Button backToMenu = (Button) findViewById(R.id.button_back_to_menu);
         backToMenu.setOnClickListener(
-                (view)->{
+                (view) -> {
                     startActivity(new Intent(GameActivity.this, MainActivity.class));
                 }
         );
@@ -300,33 +311,33 @@ public class GameActivity extends AppCompatActivity {
      * Helper for onCreate method which initializes buttons with
      * appropriate lambdas representing onClick methods.
      */
-    private void configGameButtons(){
-        Button leftBtn = (Button)findViewById(R.id.image_button_left_main_activity);
-        Button rotateBtn = (Button)findViewById(R.id.image_button_rotate_main_activity);
-        Button rightBtn = (Button)findViewById(R.id.image_button_right_main_activity);
-        Button downBtn = (Button)findViewById(R.id.image_button_down_main_activity);
+    private void configGameButtons() {
+        Button leftBtn = (Button) findViewById(R.id.image_button_left_main_activity);
+        Button rotateBtn = (Button) findViewById(R.id.image_button_rotate_main_activity);
+        Button rightBtn = (Button) findViewById(R.id.image_button_right_main_activity);
+        Button downBtn = (Button) findViewById(R.id.image_button_down_main_activity);
         // config with lambdas
         leftBtn.setOnClickListener(
-                (view)->{
-                    if(isGoing) moveLeft();
+                (view) -> {
+                    if (isGoing) moveLeft();
                 }
         );
 
         rotateBtn.setOnClickListener(
-                (view) ->{
+                (view) -> {
                     if (isGoing) rotate();
 
                 }
         );
 
         rightBtn.setOnClickListener(
-                (view)->{
+                (view) -> {
                     if (isGoing) moveRight();
                 }
         );
 
         downBtn.setOnClickListener(
-                (view)->{
+                (view) -> {
                     if (isGoing) goDown();
 
                 }
@@ -337,30 +348,30 @@ public class GameActivity extends AppCompatActivity {
     /**
      * ********************************************************************************
      * Methods creating move of the block. Basically they just send
-     *  'message' to the Handler. Is generated as a Thread (for efficiency) because of the Handler.
-     *  The thread just send a message to Handler which interacts with UI.
+     * 'message' to the Handler. Is generated as a Thread (for efficiency) because of the Handler.
+     * The thread just send a message to Handler which interacts with UI.
      */
 
     public void moveRight() {
-        new Thread(()-> {
+        new Thread(() -> {
             GameActivity.this.refreshHandler.sendEmptyMessage(GameValues.RIGHT);
         }).start();
     }
 
     public void moveLeft() {
-        new Thread(()-> {
+        new Thread(() -> {
             GameActivity.this.refreshHandler.sendEmptyMessage(GameValues.LEFT);
         }).start();
     }
 
     public void rotate() {
-        new Thread(()-> {
+        new Thread(() -> {
             GameActivity.this.refreshHandler.sendEmptyMessage(GameValues.ROTATE);
         }).start();
     }
 
     public void goDown() {
-        new Thread(()-> {
+        new Thread(() -> {
             GameActivity.this.refreshHandler.sendEmptyMessage(GameValues.DROP_DOWN);
         }).start();
     }
@@ -369,11 +380,10 @@ public class GameActivity extends AppCompatActivity {
      * Sends message to the Handler to perform reset of the game.
      */
     public void reset() {
-        new Thread(()->{
+        new Thread(() -> {
             GameActivity.this.refreshHandler.sendEmptyMessage(GameValues.RESET);
         }).start();
     }
-
 
 
     /**
@@ -389,7 +399,8 @@ public class GameActivity extends AppCompatActivity {
 
 
     /**
-     *  The thread normally performs 'way down' of the block.
+     * The thread normally performs 'way down' of the block.
+     *
      * @param milliseconds amount of time after which the thread will launch repeatedly
      */
     public void setNewTimer(int milliseconds) {
@@ -397,18 +408,18 @@ public class GameActivity extends AppCompatActivity {
         // schedule a task to be performed repeatedly on fixed-rate
         this.timer.scheduleAtFixedRate(new TimerTask() {
             @Override
-            public void run(){
+            public void run() {
                 GameActivity.this.refreshHandler.sendEmptyMessage(GameValues.NORMAL_DOWN);
             }
         }, 1 * 1000, milliseconds);
     }
 
     /**
-     *  Shedules new TimerTask which sends a message to handler to
-     *  clear the whole view and reset the game.
+     * Shedules new TimerTask which sends a message to handler to
+     * clear the whole view and reset the game.
      */
-    public void clearAllCellsAndShowToast(String message){
-        Toast.makeText(this,message,Toast.LENGTH_LONG).show();
+    public void clearAllCellsAndShowToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
 
         this.timer = new Timer();
         this.timer.scheduleAtFixedRate(new TimerTask() {
@@ -428,7 +439,7 @@ public class GameActivity extends AppCompatActivity {
 
 
     /**
-     *  Pushes next block to the GameView and generates new next block
+     * Pushes next block to the GameView and generates new next block
      */
     public void pushNextBlock() {
 
@@ -440,21 +451,22 @@ public class GameActivity extends AppCompatActivity {
         this.generateNextBlock();
     }
 
-    public int getCurrentScore(){
+    public int getCurrentScore() {
         return currentScore;
     }
 
-    public synchronized void addPoints(int pointsToAdd){
+    public synchronized void addPoints(int pointsToAdd) {
         currentScore += pointsToAdd;
     }
-    public synchronized  void setCurrentScore(int currentScore){
+
+    public synchronized void setCurrentScore(int currentScore) {
         this.currentScore = currentScore;
     }
 
-    public void setPlayAgainBtnEnable(){
+    public void setPlayAgainBtnEnable() {
         playAgainBtn.setEnabled(true);
         playAgainBtn.setClickable(true);
-        playAgainBtn.setBackgroundColor(getResources().getColor( R.color.colorPrimaryDark));
+        playAgainBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
     }
 
 

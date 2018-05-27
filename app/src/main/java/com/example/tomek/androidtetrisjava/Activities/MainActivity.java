@@ -7,18 +7,26 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.tomek.androidtetrisjava.Activities.TopScoresActivity.TopScoresActivity;
 import com.example.tomek.androidtetrisjava.R;
 
 public class MainActivity extends AppCompatActivity {
+
+    private String playerName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        String s = getIntent().getStringExtra("");
 
         configureNewGameBtn();
     }
@@ -29,7 +37,8 @@ public class MainActivity extends AppCompatActivity {
         Button newGameBtn = (Button)findViewById(R.id.new_game_btn);
         newGameBtn.setOnClickListener(
                 (View v) -> {
-                    startActivity(new Intent(MainActivity.this,GameActivity.class));
+                    Intent intent = new Intent(MainActivity.this,GameActivity.class);
+                    showDialogForName(intent);
                 }
         );
 
@@ -42,10 +51,17 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.quit_game_btn).setOnClickListener(
                 (view)-> {
-                    //close whole app :)
-                    MainActivity.this.finish();
+                   //todo: doesn't work -> bad practice
+                    System.exit(0);
                 }
 
+        );
+
+        Button highestScores = (Button)findViewById(R.id.high_score_btn);
+        highestScores.setOnClickListener(
+                (view)->{
+                    startActivity(new Intent(MainActivity.this,TopScoresActivity.class));
+                }
         );
 
     }
@@ -86,6 +102,36 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt(getString(R.string.level), level);
         editor.apply(); // handle in the background
+    }
+
+
+
+    private void showDialogForName(Intent intent) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Please insert your name:");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            MainActivity.this.playerName =  input.getText().toString();
+            intent.putExtra("PLAYER_NAME", playerName);
+            startActivity(intent);
+        });
+        builder.setNegativeButton("Cancel",
+                (dialog, which) ->
+
+                {
+                    dialog.cancel();
+                }
+
+        );
+
+        builder.show();
+
+
+
     }
 
 
